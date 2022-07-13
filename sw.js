@@ -60,10 +60,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('install', (event) => {
   event.waitUntil(
     addResourcesToCache([
-      '/',
-      '/index.html',
-      '/alpinejs-3.x.x.min.js',
-      '/alpinejs-persist-3.x.x.min.js',
+      '/crudite/',
+      '/crudite/index.html',
+      '/crudite/alpinejs-3.x.x.min.js',
+      '/crudite/alpinejs-persist-3.x.x.min.js',
     ])
   );
 });
@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
     cacheFirst({
       request: event.request,
       preloadResponsePromise: event.preloadResponse,
-      fallbackUrl: '/fallback.html',
+      fallbackUrl: '/crudite/index.html',
     })
   );
 });

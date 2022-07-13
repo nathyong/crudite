@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>exercise tracker</title>
+
+    <script defer src="./alpinejs-persist-3.x.x.min.js"></script>
+    <script defer src="./alpinejs-3.x.x.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Exercise tracker</h1>
+
+    <ul x-data="global">
+        <template x-for="session in sessions">
+            <li>
+                <span x-text="session.date"></span>
+                <button x-on:click="sessions.push({date: new Date().toDateString(), exercises: JSON.parse(JSON.stringify(session.exercises))})">copy</button>
+                <ul>
+                    <template x-for="(v, k) in session.exercises">
+                        <li x-data="{reps: (v.length ? v[v.length - 1] : 7)}">
+                            <span x-text="k"></span>
+                            <span x-text="v"></span>
+                            <button x-on:click="if (session.exercises[k].length) { session.exercises[k].pop() } else { delete session.exercises[k] }">remove</button>
+                            <button x-on:click="reps--">-</button>
+                            <button x-on:click="reps++">+</button>
+                            <span x-text="reps"></span>
+                            <button x-on:click="session.exercises[k].push(reps)">add</button>
+                        </li>
+                    </template>
+                    <li x-data="{name: 'squat', reps: 7}">
+                        <input type="text" x-model="name" style="width:10ch">
+                        <button x-on:click="session.exercises[name] = []">add</button>
+                    </li>
+                </ul>
+            </li>
+        </template>
+    </ul>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('global', function () {
+            return {
+                sessions: this.$persist([
+                    // {date: new Date('2022-01-01').toDateString(), exercises: {squat: [7, 7, 6], bench: [150, 150, 200]}},
+                ])
+            }
+        })
+    })
+
+    const registerServiceWorker = async () => {
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register(
+            'sw.js',
+          );
+          if (registration.installing) {
+            console.log('Service worker installing');
+          } else if (registration.waiting) {
+            console.log('Service worker installed');
+          } else if (registration.active) {
+            console.log('Service worker active');
+          }
+        } catch (error) {
+          console.error(`Registration failed with ${error}`);
+        }
+      }
+    };
+
+    registerServiceWorker();
+</script>
+  </body>
+</html>

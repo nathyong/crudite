@@ -1,5 +1,11 @@
 const addResourcesToCache = async (resources) => {
   const cache = await caches.open('v1');
+  const currentKeys = await cache.keys();
+  for (const k of currentKeys) {
+    if (! resources.includes(k)) {
+      await cache.delete(k);
+    }
+  }
   await cache.addAll(resources);
 };
 
@@ -62,8 +68,11 @@ self.addEventListener('install', (event) => {
     addResourcesToCache([
       '/crudite/',
       '/crudite/index.html',
-      '/crudite/lit-html.js',
-      '/crudite/ref.js',
+      '/crudite/lit-html@2.6.1/async-directive.js',
+      '/crudite/lit-html@2.6.1/directive-helpers.js',
+      '/crudite/lit-html@2.6.1/directive.js',
+      '/crudite/lit-html@2.6.1/lit-html.js',
+      '/crudite/lit-html@2.6.1/directives/ref.js',
     ])
   );
 });

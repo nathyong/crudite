@@ -62,8 +62,8 @@ self.addEventListener('install', (event) => {
     addResourcesToCache([
       '/crudite/',
       '/crudite/index.html',
-      '/crudite/alpinejs-3.x.x.min.js',
-      '/crudite/alpinejs-persist-3.x.x.min.js',
+      '/crudite/lit-html.js',
+      '/crudite/ref.js',
     ])
   );
 });

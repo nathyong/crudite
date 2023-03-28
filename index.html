@@ -21,6 +21,14 @@
 ul.exercise li {
     padding-bottom: 1ch;
 }
+
+span.menu-expand {
+    display: none;
+}
+
+span.expanded.menu-expand {
+    display: inline;
+}
     </style>
 
 </head>
@@ -50,7 +58,13 @@ function newSession() {
 }
 
 function copySession(session) {
-    _sessions.push(JSON.parse(JSON.stringify(session)))
+    let newSession = JSON.parse(JSON.stringify(session))
+    newSession.date = new Date().toDateString()
+    _sessions.push(newSession)
+}
+
+function removeSession(session) {
+    _sessions = _sessions.filter(s => session !== s)
 }
 
 function renderSession(s) {
@@ -107,9 +121,17 @@ function renderSession(s) {
     }
 
     let inputRef = createRef()
+    let extraOptionsRef = createRef()
 
     return html`<div>
-        <h2>${s.date} <button @click=${() => {copySession(s); update()}}>copy</button></h2>
+        <h2>
+            ${s.date}
+            <button @click=${() => {extraOptionsRef.value.classList.toggle("expanded")}}>…</button>
+            <span class="menu-expand" ${ref(extraOptionsRef)}>
+                <button @click=${() => {copySession(s); update()}}>copy</button>
+                <button @click=${() => {removeSession(s); update()}}>remove</button>
+            </span>
+        </h2>
         <ul class="exercise">
             ${Object.entries(s.exercises).map(([k, v]) => renderExercise(k, v))}
             <li>

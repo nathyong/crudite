@@ -54,12 +54,15 @@ if (! storageHas(SESSIONS_KEY, localStorage)) {
 let _sessions = storageGet(SESSIONS_KEY)
 
 function newSession() {
-    _sessions.push({date: new Date().toDateString(), exercises: {}})
+    _sessions.push({date: new Date().toJSON(), exercises: {}})
 }
 
 function copySession(session) {
     let newSession = JSON.parse(JSON.stringify(session))
-    newSession.date = new Date().toDateString()
+    newSession.date = new Date().toJSON()
+    for (const [k, v] of Object.entries(newSession.exercises)) {
+        newSession.exercises[k] = []
+    }
     _sessions.push(newSession)
 }
 
@@ -86,6 +89,11 @@ function renderSession(s) {
         if (s.units[name] <= 0) {
             delete s.units[name]
         }
+    }
+    const updateDate = (delta) => {
+        let d = new Date(s.date)
+        d.setDate(d.getDate() + delta)
+        s.date = d.toJSON()
     }
 
     const renderExercise = (name, reps) => {
@@ -125,9 +133,11 @@ function renderSession(s) {
 
     return html`<div>
         <h2>
-            ${s.date}
+            ${new Date(s.date).toDateString()}
             <button @click=${() => {extraOptionsRef.value.classList.toggle("expanded")}}>…</button>
             <span class="menu-expand" ${ref(extraOptionsRef)}>
+                <button @click=${() => {updateDate(-1); update()}}>-</button>
+                <button @click=${() => {updateDate(1); update()}}>+</button>
                 <button @click=${() => {copySession(s); update()}}>copy</button>
                 <button @click=${() => {removeSession(s); update()}}>remove</button>
             </span>
